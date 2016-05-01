@@ -1,0 +1,13 @@
+.metadata/
+.refactorings/
+.settings/
+
+test/
+bin/
+*.class
+*.zip
+*.jar
+*.log
+
+.project
+.classpath

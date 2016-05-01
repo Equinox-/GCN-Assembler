@@ -1,0 +1,17 @@
+package com.pi.ui.cmd;
+
+import java.io.File;
+
+import com.pi.FileUtil;
+import com.pi.cl.Module;
+import com.pi.gcn.encode.Mem_Lines;
+
+public class GCNDecompile {
+	private static final String BASE = "test/" + Module.PREFIX + "-Tonga";
+
+	public static void main(String[] args) {
+		GCN_State state = new GCN_State(new File(BASE + ".bin"));
+		String s = Mem_Lines.memToFile(state.insnSet, state.getISA(), true, false);
+		FileUtil.write(BASE + "2.gcn", s);
+	}
+}
