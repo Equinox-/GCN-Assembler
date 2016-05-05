@@ -17,7 +17,7 @@ public class MCOperand {
 
 	public static GenRef decodeRef7(int src) {
 		if (src < 0)
-			return null;
+			return new BadRef(src);
 		if (src <= 101)
 			return new SGPR(src);
 		switch (src) {
@@ -26,9 +26,9 @@ public class MCOperand {
 		case 103:
 			return new RWregister(Register32.FLAT_SCRATCH_HI); // FLAT_SCR_HI
 		case 104:
-			return null; // XNACK_MASK_LO
+			return new BadRef(src); // XNACK_MASK_LO
 		case 105:
-			return null; // XNACK_MASK_HI
+			return new BadRef(src); // XNACK_MASK_HI
 		case 106:
 			return new RWregister(Register32.VCC_LO);
 		case 107:
@@ -44,19 +44,19 @@ public class MCOperand {
 		default:
 		}
 		if (src <= 123)
-			return null; // Trap handlers [112-123] -> [ttmp0-ttmp11]
+			return new BadRef(src); // Trap handlers [112-123] -> [ttmp0-ttmp11]
 		switch (src) {
 		case 124:
 			return new RWregister(Register32.M0);
 		case 125:
-			return null; // reserved
+			return new BadRef(src); // reserved
 		case 126:
 			return new RWregister(Register32.EXEC_LO);
 		case 127:
 			return new RWregister(Register32.EXEC_HI);
 		default:
 		}
-		return null;
+		return new BadRef(src);
 	}
 
 	public static GenRef decodeRef8(int src) {
@@ -91,18 +91,15 @@ public class MCOperand {
 		}
 		if (src <= 250)
 			return new BadRef(src); // reserved
-		switch (src)
-		{
+		switch (src) {
 		case 251:
 			return new ROregister(Register32.VCCZ);
 		case 252:
 			return new ROregister(Register32.EXECZ);
 		case 253:
 			return new ROregister(Register32.SCC);
-		case 254:
-			return new BadRef(src); // reserved
 		default:
-			return null; // failure
+			return new BadRef(src); // reserved
 		}
 	}
 
@@ -111,7 +108,7 @@ public class MCOperand {
 			return decodeRef8(src);
 		if (src <= 511)
 			return new VGPR(src - 256);
-		return null;
+		return new BadRef(src);
 	}
 
 	public static int encodeRef(GenRef ref) {
@@ -173,7 +170,7 @@ public class MCOperand {
 				return 246;
 			else if (ref == InlineFloat.IF_N4)
 				return 247;
-		}else if (ref instanceof BadRef) {
+		} else if (ref instanceof BadRef) {
 			return ((BadRef) ref).code;
 		}
 		throw new IllegalArgumentException("Can't encode refcode for " + ref);

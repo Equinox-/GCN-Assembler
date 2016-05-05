@@ -8,7 +8,7 @@ import java.util.List;
 import com.pi.Utils;
 import com.pi.gcn.OpcodeLayout;
 import com.pi.gcn.base.MC;
-import com.pi.gcn.genmem.DS;
+import com.pi.gcn.ds.DS;
 import com.pi.gcn.genmem.EXP;
 import com.pi.gcn.genmem.FLAT;
 import com.pi.gcn.genmem.MIMG;

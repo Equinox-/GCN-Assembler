@@ -8,7 +8,7 @@ import com.pi.gcn.base.MC;
 import com.pi.gcn.data.GenSrc;
 import com.pi.gcn.data.SGPR;
 import com.pi.gcn.data.VGPR;
-import com.pi.gcn.genmem.DS;
+import com.pi.gcn.ds.DS_Base;
 import com.pi.gcn.genmem.FLAT;
 import com.pi.gcn.salu.SALU;
 import com.pi.gcn.smem.SMEM_Base;
@@ -72,10 +72,10 @@ public class GCNAnalyze {
 				s.use(((FLAT) m).addrSource(), 1);
 				s.use(((FLAT) m).dest(), 1);
 				s.use(((FLAT) m).srcData(), 1);
-			} else if (m instanceof DS) {
-				s.use(((DS) m).addrSrc(), 1);
-				s.use(((DS) m).data0(), 1);
-				s.use(((DS) m).data1(), 1);
+			} else if (m instanceof DS_Base) {
+				s.use(((DS_Base) m).addrSrc(), 1);
+				s.use(((DS_Base) m).data0(), 1);
+				s.use(((DS_Base) m).data1(), 1);
 			}
 		}
 		return s;
