@@ -18,6 +18,7 @@ import static com.pi.gcn.proc.SubtargetFeature.VolcanicIslands;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -29,6 +30,10 @@ public class Processor {
 
 	public static Processor valueOf(String name) {
 		return nameToProc.get(name.toUpperCase());
+	}
+
+	public static Collection<Processor> values() {
+		return Collections.unmodifiableCollection(nameToProc.values());
 	}
 
 	// Taken from the LLVM spec

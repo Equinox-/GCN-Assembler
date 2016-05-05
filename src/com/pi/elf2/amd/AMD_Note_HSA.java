@@ -57,14 +57,14 @@ public enum AMD_Note_HSA {
 			}
 			mp.put(keys[i], val);
 		}
-
 		for (int i = 0; i < keys.length; i++)
 			if (keys[i].endsWith("_size")) {
 				String strn = keys[i].substring(0, keys[i].length() - 5);
 				int count = ((Number) mp.get(keys[i])).intValue();
+				count = Math.min(count, b.remaining());
 				byte[] bts = new byte[count];
 				b.get(bts);
-				mp.put(strn, new String(bts));
+				mp.put(strn, new String(bts).trim());
 			}
 		return mp;
 	}
