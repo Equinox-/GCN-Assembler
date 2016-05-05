@@ -1,4 +1,4 @@
-package com.pi.gcn.valu;
+package com.pi.gcn.valu.vop3;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -8,30 +8,28 @@ import com.pi.gcn.base.RefEncoding;
 import com.pi.gcn.data.GenSrc;
 import com.pi.gcn.data.VGPR;
 
-public class VOP3a extends VOP3 {
-	private static final int[] ABS = { 8, 11 };
-
-	public VOP3a(ByteBuffer insn) {
-		super(insn);
+public abstract class VOP3a_Base extends VOP3_Base {
+	public VOP3a_Base(ByteBuffer insn, VOP3_Layout layout) {
+		super(insn, layout);
 	}
 
-	public VOP3a(int opcode) {
-		super(opcode);
+	public VOP3a_Base(long insn, VOP3_Layout layout) {
+		super(insn, layout);
 	}
 
 	public int abs() {
-		return (int) get(ABS);
+		return (int) get(layout.ABS);
 	}
 
 	// take abs of n-th operand
 	public boolean abs(int op) {
 		assert op >= 0 && op < 3;
-		return get(ABS[0] + op);
+		return get(layout.ABS[0] + op);
 	}
 
 	public void abs(int op, boolean b) {
 		assert op >= 0 && op < 3;
-		set(ABS[0] + op, b);
+		set(layout.ABS[0] + op, b);
 	}
 
 	@Override
@@ -61,7 +59,7 @@ public class VOP3a extends VOP3 {
 				out.add("ABS" + i);
 		encodeOpts(out);
 	}
-	
+
 	@Override
 	public String format() {
 		return "dest src0 src1 src2";

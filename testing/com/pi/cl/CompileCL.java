@@ -15,8 +15,6 @@ import org.lwjgl.system.MemoryUtil;
 import com.pi.FileUtil;
 
 public class CompileCL {
-	public static final String DEVICE = "Tonga";
-
 	public static int getDeviceInfoInt(long device, int name) {
 		IntBuffer b = BufferUtils.createIntBuffer(1);
 		CL10.clGetDeviceInfo(device, name, b, null);
@@ -59,7 +57,7 @@ public class CompileCL {
 
 		long device = 0;
 		for (int i = 0; i < devices.capacity(); ++i) {
-			if (getDeviceInfoString(devices.get(i), CL10.CL_DEVICE_NAME).equalsIgnoreCase(DEVICE)) {
+			if (getDeviceInfoString(devices.get(i), CL10.CL_DEVICE_NAME).equalsIgnoreCase(Module.DEVICE)) {
 				device = devices.get(i);
 				break;
 			}
@@ -108,6 +106,6 @@ public class CompileCL {
 		ByteBuffer code = BufferUtils.createByteBuffer((int) size.get(0));
 		compiled.put(0, code);
 		CLUtil.checkCLError(CL10.clGetProgramInfo(program, CL10.CL_PROGRAM_BINARIES, compiled, ret));
-		FileUtil.write("test/" + Module.PREFIX + "-" + DEVICE + ".bin", code);
+		FileUtil.write("test/" + Module.PREFIX + "-" + Module.DEVICE + ".bin", code);
 	}
 }

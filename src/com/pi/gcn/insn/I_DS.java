@@ -49,7 +49,6 @@ public class I_DS {
 		s.add("DS_MIN_RTN_F32", DS.class, 50);
 		s.add("DS_MAX_RTN_F32", DS.class, 51);
 		s.add("DS_WRAP_RTN_B32", DS.class, 52);
-		s.add("reserved.", DS.class, 53);
 		s.add("DS_SWIZZLE_B32", DS.class, 61);
 		s.add("DS_READ_B32", DS.class, 54);
 		s.add("DS_READ2_B32", DS.class, 55);

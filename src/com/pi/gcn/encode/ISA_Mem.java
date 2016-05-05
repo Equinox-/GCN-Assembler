@@ -23,16 +23,16 @@ import com.pi.gcn.smem.SMEM;
 import com.pi.gcn.valu.VINTRP;
 import com.pi.gcn.valu.VOP1;
 import com.pi.gcn.valu.VOP2;
-import com.pi.gcn.valu.VOP3;
 import com.pi.gcn.valu.VOPC;
+import com.pi.gcn.valu.vop3.VOP3.VOP3a_VI;
 import com.pi.gcn.vmem.MTBUF;
 import com.pi.gcn.vmem.MUBUF;
 
 public class ISA_Mem {
 	@SuppressWarnings("rawtypes")
 	private static final Class[] TYPES = { SOPP.class, SOPC.class, SOP1.class, SOPK.class, SOP2.class, VINTRP.class,
-			VOP1.class, VOPC.class, SMEM.class, MUBUF.class, MTBUF.class, DS.class, MIMG.class, FLAT.class, EXP.class,
-			VOP3.class, VOP2.class };
+			VOP1.class, VOPC.class, SMEM.class, MUBUF.class, MTBUF.MTBUF_VI.class, DS.class, MIMG.class, FLAT.class, EXP.class,
+			VOP3a_VI.class, VOP2.class };
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void debug(ByteBuffer b) {
@@ -70,14 +70,17 @@ public class ISA_Mem {
 				int pos = isa.position();
 				System.err.println("Starting at 0x" + Integer.toHexString(op));
 				for (int p = 0; p >= 0; --p) {
-					System.err.println(
-							(p * 4) + "\t" + Utils.padNumeral(Integer.toBinaryString(isa.getInt(pos + p * 4)), 32));
+					System.err.println(Integer.toHexString(pos + p * 4) + "\t"
+							+ Utils.padNumeral(Integer.toHexString(isa.getInt(pos + p * 4)), 8));
 					isa.position(pos + p * 4);
 					debug(isa);
 				}
-				throw new RuntimeException("Failed to decode");
+				isa.position(pos + 4);
+				// throw new RuntimeException("Failed to decode");
 			}
-			microcode.add(code);
+			if (code != null) {
+				microcode.add(code);
+			}
 			lop = op;
 		}
 		return microcode;

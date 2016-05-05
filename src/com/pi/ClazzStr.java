@@ -12,9 +12,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.pi.elf2.ELFNote;
-import com.pi.elf2.amd.AMD_Note;
+import com.pi.elf2.amd.AMD_Note_HSA;
 import com.pi.kernel.Bitfield;
-import com.pi.kernel.KernelCodeProperties;
 
 public class ClazzStr {
 	public static final Set<Object> open = new HashSet<>();
@@ -26,7 +25,7 @@ public class ClazzStr {
 		return sb.toString();
 	}
 
-	public static String stringify(String prefix, Object o) throws Exception {
+	public static String stringify(String prefix, Object o) {
 		if (o == null)
 			return prefix + " = null\n";
 		if (!open.add(o))
@@ -55,7 +54,7 @@ public class ClazzStr {
 				ELFNote eo = (ELFNote) o;
 				if (eo.name.equals("AMD")) {
 					try {
-						AMD_Note type = AMD_Note.lookup(eo.type);
+						AMD_Note_HSA type = AMD_Note_HSA.lookup(eo.type);
 						s.append(prefix + " = " + type + " -> "
 								+ type.decode(ByteBuffer.wrap(eo.desc).order(ByteOrder.LITTLE_ENDIAN)) + "\n");
 					} catch (Exception e) {
@@ -93,6 +92,9 @@ public class ClazzStr {
 				}
 			}
 			return s.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "ERR";
 		} finally {
 			open.remove(o);
 		}

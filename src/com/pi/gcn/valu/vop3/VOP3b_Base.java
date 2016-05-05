@@ -1,4 +1,4 @@
-package com.pi.gcn.valu;
+package com.pi.gcn.valu.vop3;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -8,15 +8,13 @@ import com.pi.gcn.data.GenSrc;
 import com.pi.gcn.data.SGPR;
 import com.pi.gcn.data.VGPR;
 
-public class VOP3b extends VOP3 {
-	private static final int[] SDEST = { 8, 15 };
-
-	public VOP3b(ByteBuffer insn) {
-		super(insn);
+public abstract class VOP3b_Base extends VOP3_Base {
+	public VOP3b_Base(ByteBuffer insn, VOP3_Layout layout) {
+		super(insn, layout);
 	}
 
-	public VOP3b(int opcode) {
-		super(opcode);
+	public VOP3b_Base(long insn, VOP3_Layout layout) {
+		super(insn, layout);
 	}
 
 	@Override
@@ -43,17 +41,17 @@ public class VOP3b extends VOP3 {
 
 		encodeOpts(out);
 	}
-	
+
 	@Override
 	public String format() {
 		return "vDest sDest src0 src1 src2";
 	}
 
 	public SGPR sDest() {
-		return new SGPR((int) get(SDEST));
+		return new SGPR((int) get(layout.SDEST));
 	}
 
 	public void sDest(SGPR s) {
-		set(SDEST, s.sgpr & 0xFF);
+		set(layout.SDEST, s.sgpr & 0xFF);
 	}
 }

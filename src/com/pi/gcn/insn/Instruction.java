@@ -32,7 +32,7 @@ public class Instruction {
 		try {
 			return format.getConstructor(ByteBuffer.class).newInstance(isa);
 		} catch (Exception e) {
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 

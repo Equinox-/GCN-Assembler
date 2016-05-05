@@ -1,57 +1,35 @@
-package com.pi.gcn.valu;
+package com.pi.gcn.valu.vop3;
 
 import java.nio.ByteBuffer;
 import java.util.List;
 
 import com.pi.Utils;
-import com.pi.gcn.OpcodeLayout;
-import com.pi.gcn.base.MC_64_Lit;
 import com.pi.gcn.base.MCOperand;
+import com.pi.gcn.base.MC_64;
 import com.pi.gcn.data.ComputeData;
 import com.pi.gcn.data.GenSrc;
-import com.pi.gcn.data.LiteralConstant;
 import com.pi.gcn.data.VGPR;
 
-public abstract class VOP3 extends MC_64_Lit {
-	public static final OpcodeLayout LAYOUT = new OpcodeLayout(26, 0b110100, 16, 26);
+public abstract class VOP3_Base extends MC_64 {
+	protected final VOP3_Layout layout;
 
-	private static final int[] OMOD = { 59, 61 };
-
-	private static final int[] NEG = { 61, 64 };
-
-	private static final int[] VDEST = { 0, 8 };
-
-	private static final int[] SRC0 = { 32, 41 };
-
-	private static final int[] SRC1 = { 41, 50 };
-
-	private static final int[] SRC2 = { 50, 59 };
-
-	public static boolean valid(ByteBuffer b) {
-		int bb = b.getInt(b.position());
-		return (bb >>> LAYOUT.idShift) == LAYOUT.idValue;
-	}
-
-	public VOP3(ByteBuffer insn) {
+	public VOP3_Base(ByteBuffer insn, VOP3_Layout layout) {
 		super(insn);
+		this.layout = layout;
 	}
 
-	public VOP3(int opcode) {
-		super(LAYOUT.make(opcode));
-	}
-
-	private void checkLitUpdate(GenSrc s) {
-		if (s instanceof LiteralConstant)
-			literal = ((LiteralConstant) s).constant;
+	public VOP3_Base(long insn, VOP3_Layout layout) {
+		super(insn);
+		this.layout = layout;
 	}
 
 	// Clamp output to [0,1]
 	public boolean clamp() {
-		return get(15);
+		return get(layout.CLAMP);
 	}
 
 	public void clamp(boolean b) {
-		set(15, b);
+		set(layout.CLAMP, b);
 	}
 
 	protected void decodeOpts(List<String> s) {
@@ -77,48 +55,39 @@ public abstract class VOP3 extends MC_64_Lit {
 			out.add(mod.name());
 	}
 
-	@Override
-	public boolean hasLiteral() {
-		return internalSrc0() == MCOperand.LITERAL_CONSTANT || internalSrc1() == MCOperand.LITERAL_CONSTANT
-				|| internalSrc2() == MCOperand.LITERAL_CONSTANT;
-	}
-
 	private int internalSrc0() {
-		return (int) get(SRC0);
+		return (int) get(layout.SRC0);
 	}
 
 	private int internalSrc1() {
-		return (int) get(SRC1);
+		return (int) get(layout.SRC1);
 	}
 
 	private int internalSrc2() {
-		return (int) get(SRC2);
+		return (int) get(layout.SRC2);
 	}
+
 	public int neg() {
-		return (int) get(NEG);
+		return (int) get(layout.NEG);
 	}
+
 	// Negate the n-th operand.
 	public boolean neg(int op) {
 		assert op >= 0 && op < 3;
-		return get(NEG[0] + op);
+		return get(layout.NEG[0] + op);
 	}
 
 	public void neg(int op, boolean b) {
 		assert op >= 0 && op < 3;
-		set(NEG[0] + op, b);
+		set(layout.NEG[0] + op, b);
 	}
 
 	public VOP3_OMOD omod() {
-		return VOP3_OMOD.values()[(int) get(OMOD)];
+		return VOP3_OMOD.values()[(int) get(layout.OMOD)];
 	}
 
 	public void omod(VOP3_OMOD v) {
-		set(OMOD, v.ordinal());
-	}
-
-	@Override
-	public int opcode() {
-		return (int) get(LAYOUT.op);
+		set(layout.OMOD, v.ordinal());
 	}
 
 	@Override
@@ -129,46 +98,37 @@ public abstract class VOP3 extends MC_64_Lit {
 
 	public GenSrc src0() {
 		int src = internalSrc0();
-		if (src == MCOperand.LITERAL_CONSTANT)
-			return new LiteralConstant(literal);
 		return (GenSrc) MCOperand.decodeRef9(src);
 	}
 
 	public void src0(GenSrc s) {
-		checkLitUpdate(s);
-		set(SRC0, MCOperand.encodeRef(s));
+		set(layout.SRC0, MCOperand.encodeRef(s));
 	}
 
 	public GenSrc src1() {
 		int src = internalSrc1();
-		if (src == MCOperand.LITERAL_CONSTANT)
-			return new LiteralConstant(literal);
 		return (GenSrc) MCOperand.decodeRef9(src);
 	}
 
 	public void src1(GenSrc s) {
-		checkLitUpdate(s);
-		set(SRC1, MCOperand.encodeRef(s));
+		set(layout.SRC1, MCOperand.encodeRef(s));
 	}
 
 	public GenSrc src2() {
 		int src = internalSrc2();
-		if (src == MCOperand.LITERAL_CONSTANT)
-			return new LiteralConstant(literal);
 		return (GenSrc) MCOperand.decodeRef9(src);
 	}
 
 	public void src2(GenSrc s) {
-		checkLitUpdate(s);
-		set(SRC2, MCOperand.encodeRef(s));
+		set(layout.SRC2, MCOperand.encodeRef(s));
 	}
 
 	public VGPR vDest() {
-		return new VGPR((int) get(VDEST));
+		return new VGPR((int) get(layout.VDEST));
 	}
 
 	public void vDest(VGPR v) {
-		set(VDEST, v.vgpr & 0xFF);
+		set(layout.VDEST, v.vgpr & 0xFF);
 	}
 
 	public static enum VOP3_OMOD {
@@ -181,5 +141,10 @@ public abstract class VOP3 extends MC_64_Lit {
 		private VOP3_OMOD(float k) {
 			this.k = k;
 		}
+	}
+
+	@Override
+	public int opcode() {
+		return (int) get(layout.encode.op);
 	}
 }

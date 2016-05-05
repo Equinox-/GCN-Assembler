@@ -2,7 +2,7 @@ package com.pi.gcn.data;
 
 public class InlineInt implements GenSrc {
 	public static final InlineInt ZERO = new InlineInt(0);
-	public static final InlineInt[] POSITIVE = new InlineInt[63];
+	public static final InlineInt[] POSITIVE = new InlineInt[64];
 	public static final InlineInt[] NEGATIVE = new InlineInt[15];
 
 	static {

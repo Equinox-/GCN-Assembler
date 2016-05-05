@@ -10,6 +10,7 @@ import com.pi.elf2.ELFFile;
 import com.pi.elf2.ELFProgramBits;
 import com.pi.elf2.ELFSymbolTable;
 import com.pi.elf2.amd.AMDElf;
+import com.pi.elf2.amd.AMDMachine;
 import com.pi.gcn.base.MC;
 import com.pi.gcn.encode.ISA_Mem;
 import com.pi.gcn.encode.Mem_ISA;
@@ -20,18 +21,20 @@ import com.pi.kernel.KernelCode;
 public class GCN_State {
 	public byte[] code;
 	private final ELFFile elf, exe;
-	private final KernelCode kc;
+	public final KernelCode kc;
 	private final ELFProgramBits exeData, hsaData;
 
 	public final InstructionSet insnSet;
 
 	public GCN_State(File f) {
-		insnSet = new InstructionSet(Processor.valueOf("tonga"));
+		insnSet = new InstructionSet(Processor.valueOf("verde"));
 
 		byte[] data = FileUtil.read(f.getAbsolutePath());
 		// Load binary ELF
 		elf = new ELFFile();
 		elf.read(ByteBuffer.wrap(data));
+		
+//		System.out.println("Binary is for " + AMDMachine.lookup(elf.header.e_machine));
 
 		// Load executable ELF
 		exeData = ((ELFProgramBits) elf.section(".text").component);
@@ -39,18 +42,29 @@ public class GCN_State {
 		exe.read(exeData.buffer());
 		FileUtil.write("test/inner-in.bin", exeData.progbits);
 
-		// Load HSA data
-		hsaData = ((ELFProgramBits) exe.section(".hsatext").component);
-		ByteBuffer isa = hsaData.buffer();
+		if (exe.header.e_machine == AMDElf.ELF_INNER_MACHINE_ATI_CALIMAGE_BINARY) {
+			hsaData = (ELFProgramBits) exe.section(".text").component;
+			ByteBuffer isa = hsaData.buffer();
+			code = new byte[isa.remaining()];
+			isa.get(code);
 
-		// Read the kernel spec
-		kc = new KernelCode();
-		kc.read(isa);
-		if (kc.kernel_code_entry_byte_offset != KernelCode.SIZE)
-			throw new UnsupportedOperationException("Can't place ISA at " + kc.kernel_code_entry_byte_offset);
+			// Read the kernel spec from the notes?
+			kc = new KernelCode();
+		} else {
+			// Load HSA data
+			hsaData = ((ELFProgramBits) exe.section(".hsatext").component);
+			ByteBuffer isa = hsaData.buffer();
 
-		code = new byte[isa.remaining()];
-		isa.get(code);
+			// Read the kernel spec
+			kc = new KernelCode();
+			kc.read(isa);
+			// System.out.println(ClazzStr.stringify("kc", kc));
+			if (kc.kernel_code_entry_byte_offset != KernelCode.SIZE)
+				throw new UnsupportedOperationException("Can't place ISA at " + kc.kernel_code_entry_byte_offset);
+
+			code = new byte[isa.remaining()];
+			isa.get(code);
+		}
 	}
 
 	public ByteOrder order() {

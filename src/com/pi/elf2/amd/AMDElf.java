@@ -11,4 +11,6 @@ public class AMDElf {
 	public static final int ELF_INNER_SYMBOL_INFO_KERNEL = 26;
 	
 	public static final int ELF_INNER_PROG_TYPE_KERNEL = ELFProgramHeader.ELFProgramHeaderType.LOOS.value + 3;
+	
+	public static final int ELF_INNER_MACHINE_ATI_CALIMAGE_BINARY = 0x7D;
 }

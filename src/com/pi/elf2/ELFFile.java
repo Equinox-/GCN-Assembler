@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pi.ClazzStr;
 import com.pi.elf2.ELFHeader.EIClass;
 
 public class ELFFile {
@@ -42,6 +43,8 @@ public class ELFFile {
 		programs.offset = (int) header.e_phoff;
 		programs.size = header.e_phentsize * header.e_phnum;
 		programs.read(b);
+		
+//		System.out.println(ClazzStr.stringify("header", header));
 
 		sections = new ELFSectionTable(this, this);
 		sections.offset = (int) header.e_shoff;

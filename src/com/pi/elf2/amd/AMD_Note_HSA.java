@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum AMD_Note {
+public enum AMD_Note_HSA {
 	HSA_CODE_OBJECT_VERSION(1, new String[] { "major", "minor" }, new int[] { 4, 4 }),
 	HSA_HSAIL(2, new String[] { "major", "minor", "profile", "machine", "default_flt_round" },
 			new int[] { 4, 4, 1, 1, 1 }),
@@ -19,8 +19,8 @@ public enum AMD_Note {
 
 	public final int value;
 
-	public static AMD_Note lookup(int v) {
-		for (AMD_Note c : values())
+	public static AMD_Note_HSA lookup(int v) {
+		for (AMD_Note_HSA c : values())
 			if (c.value == v)
 				return c;
 		throw new RuntimeException("Bad value: " + v);
@@ -29,7 +29,7 @@ public enum AMD_Note {
 	private final String[] keys;
 	private final int[] sizeof;
 
-	private AMD_Note(int v, String[] keys, int[] sizes) {
+	private AMD_Note_HSA(int v, String[] keys, int[] sizes) {
 		this.value = (int) v;
 		this.keys = keys;
 		this.sizeof = sizes;

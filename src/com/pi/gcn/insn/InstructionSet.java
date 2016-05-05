@@ -15,6 +15,7 @@ public class InstructionSet {
 	public static InstructionSet lastCreated;
 
 	private final Map<String, Instruction> instructions = new HashMap<>();
+	private final Map<String, String> aliases = new HashMap<>();
 
 	public final Processor processor;
 
@@ -22,6 +23,7 @@ public class InstructionSet {
 		this.processor = p;
 		I_FLAT.register(this);
 		I_MUBUF.register(this);
+		I_MTBUF.register(this);
 		I_SMEM.register(this);
 		I_SOP1.register(this);
 		I_SOP2.register(this);
@@ -48,7 +50,7 @@ public class InstructionSet {
 
 	public Instruction add(Instruction s) {
 		if (instructions.containsKey(s.name))
-			throw new IllegalArgumentException("Name exists");
+			throw new IllegalArgumentException("Name \"" + s.name + "\" exists");
 		instructions.put(s.name, s);
 		return s;
 	}
@@ -72,11 +74,21 @@ public class InstructionSet {
 
 	public Instruction add(final String name, Class<? extends MC> format, MultiOp opcode, OpcodeLayout layout,
 			String... doc) {
+		if (opcode.opcodeFor(processor) == -1)
+			return null;
 		return add(new Instruction(name, format, opcode.opcodeFor(processor), layout, doc));
 	}
 
 	public Instruction add(final String name, Class<? extends MC> format, MultiOp opcode, String... doc) {
 		return add(name, format, opcode, layoutFor(format), doc);
+	}
+
+	public void alias(String alias, String insn) {
+		if (!instructions.containsKey(insn))
+			throw new IllegalArgumentException("Instruction \"" + insn + "\" doesn't exist");
+		if (instructions.containsKey(alias) || aliases.containsKey(alias))
+			throw new IllegalArgumentException("Instruction \"" + alias + "\" already exists");
+		this.aliases.put(alias, insn);
 	}
 
 	public static OpcodeLayout layoutFor(Class<? extends MC> format) {

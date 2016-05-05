@@ -2,6 +2,7 @@ package com.pi.gcn.insn;
 
 import com.pi.gcn.MultiOp;
 import com.pi.gcn.genmem.FLAT;
+import com.pi.gcn.proc.SubtargetFeature;
 
 public class I_FLAT {
 	public static void register(InstructionSet s) {
@@ -50,5 +51,14 @@ public class I_FLAT {
 		s.add("FLAT_ATOMIC_INC_X2", FLAT.class, new MultiOp(0x5C, 0x6B));
 		s.add("FLAT_ATOMIC_DEC_X2", FLAT.class, new MultiOp(0x5D, 0x6C));
 		/* End FLAT */
+		
+		if (s.processor.has(SubtargetFeature.SeaIslands)) {
+			s.add("FLAT_ATOMIC_FCMPSWAP", FLAT.class, 0x3E);
+			s.add("FLAT_ATOMIC_FMIN", FLAT.class, 0x3f);
+			s.add("FLAT_ATOMIC_FAX", FLAT.class, 0x40);
+			s.add("FLAT_ATOMIC_FCMPSWAP_X2", FLAT.class, 0x5e);
+			s.add("FLAT_ATOMIC_FMIN_X2", FLAT.class, 0x5f);
+			s.add("FLAT_ATOMIC_FMAX_X2", FLAT.class, 0x60);
+		}
 	}
 }

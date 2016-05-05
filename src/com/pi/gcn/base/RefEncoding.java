@@ -49,7 +49,7 @@ public class RefEncoding {
 		else if (sl.startsWith("s"))
 			return new SGPR(Integer.parseInt(s.substring(1)));
 		else if (sl.startsWith("0x"))
-			return new LiteralConstant(Integer.parseInt(s.substring(2), 16));
+			return new LiteralConstant((int) Long.parseLong(s.substring(2), 16));
 		else if (sl.startsWith("br_"))
 			return new BadRef(Integer.parseInt(s.substring(3)));
 		return null;

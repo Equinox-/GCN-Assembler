@@ -1,6 +1,6 @@
 package com.pi.kernel;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public enum ComputePgmResourceRegister {
@@ -41,7 +41,7 @@ public enum ComputePgmResourceRegister {
 	}
 
 	public static Map<ComputePgmResourceRegister, Long> decodeMap(long l) {
-		Map<ComputePgmResourceRegister, Long> lps = new HashMap<>();
+		Map<ComputePgmResourceRegister, Long> lps = new EnumMap<>(ComputePgmResourceRegister.class);
 		for (ComputePgmResourceRegister s : values())
 			lps.put(s, s.get(l));
 		return lps;
