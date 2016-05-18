@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import com.pi.gcn.OpcodeLayout;
-import com.pi.gcn.base.MCOperand;
 import com.pi.gcn.base.RefEncoding;
 import com.pi.gcn.data.ComputeData;
 import com.pi.gcn.data.GenSrc;
@@ -29,11 +28,13 @@ public class SOPC extends SALU {
 		super(LAYOUT.make(opcode));
 	}
 
-	public void src0(GenSrc s) {
-		set(SRC0, MCOperand.encodeRef(s));
+	@Override
+	public void internalSrc0(int s) {
+		set(SRC0, s);
 	}
-	public void src1(GenSrc s) {
-		set(SRC1, MCOperand.encodeRef(s));
+	@Override
+	public void internalSrc1(int s) {
+		set(SRC1, s);
 	}
 	
 	@Override

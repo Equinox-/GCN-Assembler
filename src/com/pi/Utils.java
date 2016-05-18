@@ -15,6 +15,16 @@ public class Utils {
 		return found;
 	}
 
+	public static String encodeHex(int v) {
+		return "0x" + Integer.toHexString(v);
+	}
+
+	public static int decodeHex(String s) {
+		if (!s.startsWith("0x"))
+			throw new NumberFormatException();
+		return Integer.parseInt(s.substring(2), 16);
+	}
+
 	public static int indexOfAny(String s, String of, int from) {
 		int at = -1;
 		for (int c = 0; c < of.length(); c++) {

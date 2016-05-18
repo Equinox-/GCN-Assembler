@@ -24,6 +24,13 @@ public abstract class SALU extends MC_32_Lit {
 		return (GenDest) MCOperand.decodeRef7(dest);
 	}
 
+	public void dest(GenDest dest) {
+		int dv = MCOperand.encodeRef(dest);
+		if (dv > 127 || dv < 0)
+			throw new IllegalArgumentException();
+		internalDest(dv);
+	}
+
 	@Override
 	public boolean hasLiteral() {
 		int src0 = 0;
@@ -43,11 +50,23 @@ public abstract class SALU extends MC_32_Lit {
 		throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support dest");
 	}
 
+	protected void internalDest(int v) {
+		throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support dest");
+	}
+
 	protected int internalSrc0() {
 		throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support src1");
 	}
 
 	protected int internalSrc1() {
+		throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support src2");
+	}
+
+	protected void internalSrc0(int v) {
+		throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support src1");
+	}
+
+	protected void internalSrc1(int v) {
 		throw new UnsupportedOperationException(getClass().getSimpleName() + " does not support src2");
 	}
 
@@ -70,5 +89,23 @@ public abstract class SALU extends MC_32_Lit {
 		if (src == MCOperand.LITERAL_CONSTANT)
 			return new LiteralConstant(literal);
 		return (GenSrc) MCOperand.decodeRef8(src);
+	}
+
+	public void src0(GenSrc src) {
+		int dv = MCOperand.encodeRef(src);
+		if (dv == MCOperand.LITERAL_CONSTANT)
+			literal = ((LiteralConstant) src).constant;
+		if (dv > 256 || dv < 0)
+			throw new IllegalArgumentException();
+		internalSrc0(dv);
+	}
+
+	public void src1(GenSrc src) {
+		int dv = MCOperand.encodeRef(src);
+		if (dv == MCOperand.LITERAL_CONSTANT)
+			literal = ((LiteralConstant) src).constant;
+		if (dv > 256 || dv < 0)
+			throw new IllegalArgumentException();
+		internalSrc1(dv);
 	}
 }

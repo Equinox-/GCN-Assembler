@@ -4,12 +4,10 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import com.pi.gcn.OpcodeLayout;
-import com.pi.gcn.base.MCOperand;
 import com.pi.gcn.base.RefEncoding;
 import com.pi.gcn.data.ComputeData;
 import com.pi.gcn.data.GenDest;
 import com.pi.gcn.data.GenSrc;
-import com.pi.gcn.data.LiteralConstant;
 
 public class SOP2 extends SALU {
 	public static final OpcodeLayout LAYOUT = new OpcodeLayout(30, 0b10, 23, 30);
@@ -44,8 +42,9 @@ public class SOP2 extends SALU {
 		dest((GenDest) RefEncoding.decode(s.get(2)));
 	}
 
-	public void dest(GenDest s) {
-		set(DEST, MCOperand.encodeRef(s));
+	@Override
+	public void internalDest(int s) {
+		set(DEST, s);
 	}
 
 	@Override
@@ -84,15 +83,13 @@ public class SOP2 extends SALU {
 	public void run(ComputeData data) {
 	}
 
-	public void src0(GenSrc s) {
-		if (s instanceof LiteralConstant)
-			literal = ((LiteralConstant) s).constant;
-		set(SRC0, MCOperand.encodeRef(s));
+	@Override
+	public void internalSrc0(int s) {
+		set(SRC0, s);
 	}
 
-	public void src1(GenSrc s) {
-		if (s instanceof LiteralConstant)
-			literal = ((LiteralConstant) s).constant;
-		set(SRC1, MCOperand.encodeRef(s));
+	@Override
+	public void internalSrc1(int s) {
+		set(SRC1, s);
 	}
 }

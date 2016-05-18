@@ -4,7 +4,10 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 import com.pi.gcn.OpcodeLayout;
+import com.pi.gcn.base.RefEncoding;
 import com.pi.gcn.data.ComputeData;
+import com.pi.gcn.data.GenDest;
+import com.pi.gcn.data.GenSrc;
 
 public class SOP1 extends SALU {
 	public static final OpcodeLayout LAYOUT = new OpcodeLayout(23, 0b101111101, 8, 16);
@@ -28,15 +31,21 @@ public class SOP1 extends SALU {
 
 	@Override
 	public void decode(List<String> s) {
+		if (s.size() != 2)
+			throw new IllegalArgumentException();
+		src0((GenSrc) RefEncoding.decode(s.get(0)));
+		dest((GenDest) RefEncoding.decode(s.get(1)));
 	}
 
 	@Override
 	public void encodeInternal(List<String> out) {
+		out.add(RefEncoding.encode(src0()));
+		out.add(RefEncoding.encode(dest()));
 	}
-	
+
 	@Override
 	public String format() {
-		return null;
+		return "src0 dest";
 	}
 
 	@Override
@@ -45,8 +54,18 @@ public class SOP1 extends SALU {
 	}
 
 	@Override
+	protected void internalDest(int v) {
+		set(DEST, v);
+	}
+
+	@Override
 	protected int internalSrc0() {
 		return (int) get(SRC0);
+	}
+
+	@Override
+	protected void internalSrc0(int v) {
+		set(SRC0, v);
 	}
 
 	@Override
